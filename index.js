@@ -23,6 +23,8 @@ server.register({
     method: 'GET',
     path: '/',
     handler: (req, res) => {
+      server.log('error', 'oh, no')
+      server.log('info', 'replying')
       res('hello hapi')
     }
   })
