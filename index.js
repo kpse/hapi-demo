@@ -1,5 +1,6 @@
 const Hapi = require('hapi');
 const Boom = require('boom');
+const Path = require('path');
 
 const server = new Hapi.Server();
 
@@ -20,10 +21,7 @@ function handler(req, res) {
   res(req.params)
 }
 
-server.register({
-  register: require('good'),
-  options: goodOptions
-}, err => {
+server.register(require('inert'), err => {
   server.route({
     method: 'GET',
     path: '/',
@@ -68,8 +66,14 @@ server.register({
 
   server.route({
     method: 'GET',
-    path: '/jpg/{name}.jpg',
-    handler: handler
+    path: '/jpg/{name*}',
+    handler: {
+      directory: {
+        path: './public',
+        redirectToSlash: true,
+        index: true
+      }
+    }
   })
 
 
