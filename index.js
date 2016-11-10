@@ -31,6 +31,10 @@ server.register({
       server.log('error', 'oh, no')
       server.log('info', 'replying')
       res({hello: 'hello hapi'})
+        .code(418)
+        .type('text/plain')
+        .header('hello', 'world')
+        .state('hello', 'world')
     }
   })
 
