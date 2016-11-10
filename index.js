@@ -1,4 +1,5 @@
 const Hapi = require('hapi');
+const Boom = require('boom');
 
 const server = new Hapi.Server();
 
@@ -29,7 +30,23 @@ server.register({
     handler: (req, res) => {
       server.log('error', 'oh, no')
       server.log('info', 'replying')
-      res('hello hapi')
+      res({hello: 'hello hapi'})
+    }
+  })
+
+  server.route({
+    method: 'GET',
+    path: '/error',
+    handler: (req, res) => {
+      res(new Error('roor'))
+    }
+  })
+
+  server.route({
+    method: 'GET',
+    path: '/404',
+    handler: (req, res) => {
+      res(Boom.notFound())
     }
   })
 
