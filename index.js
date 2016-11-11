@@ -78,6 +78,6 @@ server.register(require('inert'), err => {
 
 
   server.start(() => console.log(`started at ${server.info.uri}`))
-})
+});
 
 
