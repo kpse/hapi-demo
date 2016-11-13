@@ -9,6 +9,14 @@ server.connection({
   port: '8000'
 })
 
+server.ext('onRequest', (req, res) => {
+  console.log('in onRequest');
+  console.log('change it to GET');
+  req.setUrl('/')
+  req.setMethod('GET')
+  res.continue()
+})
+
 server.register(require('vision'), err => {
   server.views({
     engines : {
