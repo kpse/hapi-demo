@@ -1,5 +1,5 @@
 const Hapi = require('hapi');
-const Boom = require('boom');
+const Joi = require('joi');
 const Path = require('path');
 
 const server = new Hapi.Server();
@@ -11,8 +11,20 @@ server.connection({
 
 server.route({
   method: ['PUT', 'POST'],
-  path: '/user',
+  path: '/user/{id?}',
   config: {
+    validate: {
+      params: Joi.object({
+        id: Joi.number()
+      }),
+      payload: Joi.object({
+        id: Joi.number(),
+        email: Joi.string()
+      }).unknown(),
+      query: Joi.object({
+        id: Joi.number()
+      })
+    },
     payload: {
       output: 'data',
       parse: true,
