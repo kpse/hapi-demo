@@ -1,21 +1,12 @@
 const Hapi = require('hapi');
 const Boom = require('boom');
-const Path = require('path');
 
 const server = new Hapi.Server();
 
 server.connection({
   host: 'localhost',
   port: '8000'
-})
-
-server.ext('onRequest', (req, res) => {
-  console.log('in onRequest');
-  console.log('change it to GET');
-  req.setUrl('/')
-  req.setMethod('GET')
-  res.continue()
-})
+});
 
 server.register(require('vision'), err => {
   server.views({
@@ -24,7 +15,22 @@ server.register(require('vision'), err => {
     },
     relativeTo: __dirname,
     path: 'views'
-  })
+  });
+
+  server.ext('onPreResponse', (req, reply) => {
+    const resp = req.response;
+
+    console.log('resp', resp);
+
+    if (!resp.isBoom) {
+      return reply.continue();
+    }
+    console.log('resp2', resp);
+    reply.view('error', resp.output.payload)
+      .code(resp.output.statusCode)
+
+  });
+
 
   server.route({
     method: 'GET',
@@ -32,7 +38,24 @@ server.register(require('vision'), err => {
     handler: (req, reply) => {
       reply.view('home', {name: req.params.name || 'world'})
     }
-  })
+  });
+
+  server.route({
+    method: 'GET',
+    path: '/error404',
+    handler: (req, reply) => {
+      reply(Boom.notFound())
+    }
+  });
+
+  server.route({
+    method: 'GET',
+    path: '/error400',
+    handler: (req, reply) => {
+      reply(Boom.badRequest())
+    }
+  });
+
   server.start(() => console.log(`started at ${server.info.uri}`))
 });
 
